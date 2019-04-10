@@ -69,9 +69,13 @@ defmodule AWS.IoT.DataPlane do
     client = %{client | service: "iotdata"}
     host = get_host("data.iot", client)
     url = get_url(host, url, client)
-    headers = Enum.concat([{"Host", host},
-                           {"Content-Type", "application/x-amz-json-1.1"}],
-                          headers)
+
+    headers =
+      Enum.concat(
+        [{"Host", host}, {"Content-Type", "application/x-amz-json-1.1"}],
+        headers
+      )
+
     payload = encode_payload(input)
     headers = AWS.Request.sign_v4(client, method, url, headers, payload)
     perform_request(method, url, payload, headers, options, success_status_code)
@@ -79,17 +83,22 @@ defmodule AWS.IoT.DataPlane do
 
   defp perform_request(method, url, payload, headers, options, nil) do
     case HTTPoison.request(method, url, payload, headers, options) do
-      {:ok, response=%HTTPoison.Response{status_code: 200, body: ""}} ->
+      {:ok, response = %HTTPoison.Response{status_code: 200, body: ""}} ->
         {:ok, response}
-      {:ok, response=%HTTPoison.Response{status_code: 200, body: body}} ->
+
+      {:ok, response = %HTTPoison.Response{status_code: 200, body: body}} ->
         {:ok, Poison.Parser.parse!(body), response}
-      {:ok, response=%HTTPoison.Response{status_code: 202, body: body}} ->
+
+      {:ok, response = %HTTPoison.Response{status_code: 202, body: body}} ->
         {:ok, Poison.Parser.parse!(body), response}
-      {:ok, response=%HTTPoison.Response{status_code: 204, body: body}} ->
+
+      {:ok, response = %HTTPoison.Response{status_code: 204, body: body}} ->
         {:ok, Poison.Parser.parse!(body), response}
-      {:ok, _response=%HTTPoison.Response{body: body}} ->
+
+      {:ok, _response = %HTTPoison.Response{body: body}} ->
         reason = Poison.Parser.parse!(body)["message"]
         {:error, reason}
+
       {:error, %HTTPoison.Error{reason: reason}} ->
         {:error, %HTTPoison.Error{reason: reason}}
     end
@@ -97,13 +106,16 @@ defmodule AWS.IoT.DataPlane do
 
   defp perform_request(method, url, payload, headers, options, success_status_code) do
     case HTTPoison.request(method, url, payload, headers, options) do
-      {:ok, response=%HTTPoison.Response{status_code: ^success_status_code, body: ""}} ->
+      {:ok, response = %HTTPoison.Response{status_code: ^success_status_code, body: ""}} ->
         {:ok, nil, response}
-      {:ok, response=%HTTPoison.Response{status_code: ^success_status_code, body: body}} ->
+
+      {:ok, response = %HTTPoison.Response{status_code: ^success_status_code, body: body}} ->
         {:ok, Poison.Parser.parse!(body), response}
-      {:ok, _response=%HTTPoison.Response{body: body}} ->
+
+      {:ok, _response = %HTTPoison.Response{body: body}} ->
         reason = Poison.Parser.parse!(body)["message"]
         {:error, reason}
+
       {:error, %HTTPoison.Error{reason: reason}} ->
         {:error, %HTTPoison.Error{reason: reason}}
     end

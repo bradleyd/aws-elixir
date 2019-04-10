@@ -54,7 +54,11 @@ defmodule AWS.Cognito.Sync do
   Identity or with developer credentials.
   """
   def delete_dataset(client, dataset_name, identity_id, identity_pool_id, input, options \\ []) do
-    url = "/identitypools/#{URI.encode(identity_pool_id)}/identities/#{URI.encode(identity_id)}/datasets/#{URI.encode(dataset_name)}"
+    url =
+      "/identitypools/#{URI.encode(identity_pool_id)}/identities/#{URI.encode(identity_id)}/datasets/#{
+        URI.encode(dataset_name)
+      }"
+
     headers = []
     request(client, :delete, url, headers, input, options, 200)
   end
@@ -70,7 +74,11 @@ defmodule AWS.Cognito.Sync do
   credentials to make this API call.
   """
   def describe_dataset(client, dataset_name, identity_id, identity_pool_id, options \\ []) do
-    url = "/identitypools/#{URI.encode(identity_pool_id)}/identities/#{URI.encode(identity_id)}/datasets/#{URI.encode(dataset_name)}"
+    url =
+      "/identitypools/#{URI.encode(identity_pool_id)}/identities/#{URI.encode(identity_id)}/datasets/#{
+        URI.encode(dataset_name)
+      }"
+
     headers = []
     request(client, :get, url, headers, nil, options, 200)
   end
@@ -148,7 +156,9 @@ defmodule AWS.Cognito.Sync do
   Identity credentials to make this API call.
   """
   def list_datasets(client, identity_id, identity_pool_id, options \\ []) do
-    url = "/identitypools/#{URI.encode(identity_pool_id)}/identities/#{URI.encode(identity_id)}/datasets"
+    url =
+      "/identitypools/#{URI.encode(identity_pool_id)}/identities/#{URI.encode(identity_id)}/datasets"
+
     headers = []
     request(client, :get, url, headers, nil, options, 200)
   end
@@ -177,7 +187,11 @@ defmodule AWS.Cognito.Sync do
   Identity credentials to make this API call.
   """
   def list_records(client, dataset_name, identity_id, identity_pool_id, options \\ []) do
-    url = "/identitypools/#{URI.encode(identity_pool_id)}/identities/#{URI.encode(identity_id)}/datasets/#{URI.encode(dataset_name)}/records"
+    url =
+      "/identitypools/#{URI.encode(identity_pool_id)}/identities/#{URI.encode(identity_id)}/datasets/#{
+        URI.encode(dataset_name)
+      }/records"
+
     headers = []
     request(client, :get, url, headers, nil, options, 200)
   end
@@ -189,7 +203,9 @@ defmodule AWS.Cognito.Sync do
   Identity. You cannot call this API with developer credentials.
   """
   def register_device(client, identity_id, identity_pool_id, input, options \\ []) do
-    url = "/identitypools/#{URI.encode(identity_pool_id)}/identity/#{URI.encode(identity_id)}/device"
+    url =
+      "/identitypools/#{URI.encode(identity_pool_id)}/identity/#{URI.encode(identity_id)}/device"
+
     headers = []
     request(client, :post, url, headers, input, options, 200)
   end
@@ -228,8 +244,20 @@ defmodule AWS.Cognito.Sync do
   This API can only be called with temporary credentials provided by Cognito
   Identity. You cannot call this API with developer credentials.
   """
-  def subscribe_to_dataset(client, dataset_name, device_id, identity_id, identity_pool_id, input, options \\ []) do
-    url = "/identitypools/#{URI.encode(identity_pool_id)}/identities/#{URI.encode(identity_id)}/datasets/#{URI.encode(dataset_name)}/subscriptions/#{URI.encode(device_id)}"
+  def subscribe_to_dataset(
+        client,
+        dataset_name,
+        device_id,
+        identity_id,
+        identity_pool_id,
+        input,
+        options \\ []
+      ) do
+    url =
+      "/identitypools/#{URI.encode(identity_pool_id)}/identities/#{URI.encode(identity_id)}/datasets/#{
+        URI.encode(dataset_name)
+      }/subscriptions/#{URI.encode(device_id)}"
+
     headers = []
     request(client, :post, url, headers, input, options, 200)
   end
@@ -241,8 +269,20 @@ defmodule AWS.Cognito.Sync do
   This API can only be called with temporary credentials provided by Cognito
   Identity. You cannot call this API with developer credentials.
   """
-  def unsubscribe_from_dataset(client, dataset_name, device_id, identity_id, identity_pool_id, input, options \\ []) do
-    url = "/identitypools/#{URI.encode(identity_pool_id)}/identities/#{URI.encode(identity_id)}/datasets/#{URI.encode(dataset_name)}/subscriptions/#{URI.encode(device_id)}"
+  def unsubscribe_from_dataset(
+        client,
+        dataset_name,
+        device_id,
+        identity_id,
+        identity_pool_id,
+        input,
+        options \\ []
+      ) do
+    url =
+      "/identitypools/#{URI.encode(identity_pool_id)}/identities/#{URI.encode(identity_id)}/datasets/#{
+        URI.encode(dataset_name)
+      }/subscriptions/#{URI.encode(device_id)}"
+
     headers = []
     request(client, :delete, url, headers, input, options, 200)
   end
@@ -268,12 +308,18 @@ defmodule AWS.Cognito.Sync do
   Identity or with developer credentials.
   """
   def update_records(client, dataset_name, identity_id, identity_pool_id, input, options \\ []) do
-    url = "/identitypools/#{URI.encode(identity_pool_id)}/identities/#{URI.encode(identity_id)}/datasets/#{URI.encode(dataset_name)}"
+    url =
+      "/identitypools/#{URI.encode(identity_pool_id)}/identities/#{URI.encode(identity_id)}/datasets/#{
+        URI.encode(dataset_name)
+      }"
+
     headers = []
-    if Dict.has_key?(input, "ClientContext") do
-      headers = [{"x-amz-Client-Context", input["ClientContext"]}|headers]
-      input = Dict.delete(input, "ClientContext")
+
+    if Map.has_key?(input, "ClientContext") do
+      headers = [{"x-amz-Client-Context", input["ClientContext"]} | headers]
+      input = Map.delete(input, "ClientContext")
     end
+
     request(client, :post, url, headers, input, options, 200)
   end
 
@@ -281,9 +327,13 @@ defmodule AWS.Cognito.Sync do
     client = %{client | service: "cognito-sync"}
     host = get_host("cognito-sync", client)
     url = get_url(host, url, client)
-    headers = Enum.concat([{"Host", host},
-                           {"Content-Type", "application/x-amz-json-1.1"}],
-                          headers)
+
+    headers =
+      Enum.concat(
+        [{"Host", host}, {"Content-Type", "application/x-amz-json-1.1"}],
+        headers
+      )
+
     payload = encode_payload(input)
     headers = AWS.Request.sign_v4(client, method, url, headers, payload)
     perform_request(method, url, payload, headers, options, success_status_code)
@@ -291,17 +341,22 @@ defmodule AWS.Cognito.Sync do
 
   defp perform_request(method, url, payload, headers, options, nil) do
     case HTTPoison.request(method, url, payload, headers, options) do
-      {:ok, response=%HTTPoison.Response{status_code: 200, body: ""}} ->
+      {:ok, response = %HTTPoison.Response{status_code: 200, body: ""}} ->
         {:ok, response}
-      {:ok, response=%HTTPoison.Response{status_code: 200, body: body}} ->
+
+      {:ok, response = %HTTPoison.Response{status_code: 200, body: body}} ->
         {:ok, Poison.Parser.parse!(body), response}
-      {:ok, response=%HTTPoison.Response{status_code: 202, body: body}} ->
+
+      {:ok, response = %HTTPoison.Response{status_code: 202, body: body}} ->
         {:ok, Poison.Parser.parse!(body), response}
-      {:ok, response=%HTTPoison.Response{status_code: 204, body: body}} ->
+
+      {:ok, response = %HTTPoison.Response{status_code: 204, body: body}} ->
         {:ok, Poison.Parser.parse!(body), response}
-      {:ok, _response=%HTTPoison.Response{body: body}} ->
+
+      {:ok, _response = %HTTPoison.Response{body: body}} ->
         reason = Poison.Parser.parse!(body)["message"]
         {:error, reason}
+
       {:error, %HTTPoison.Error{reason: reason}} ->
         {:error, %HTTPoison.Error{reason: reason}}
     end
@@ -309,13 +364,16 @@ defmodule AWS.Cognito.Sync do
 
   defp perform_request(method, url, payload, headers, options, success_status_code) do
     case HTTPoison.request(method, url, payload, headers, options) do
-      {:ok, response=%HTTPoison.Response{status_code: ^success_status_code, body: ""}} ->
+      {:ok, response = %HTTPoison.Response{status_code: ^success_status_code, body: ""}} ->
         {:ok, nil, response}
-      {:ok, response=%HTTPoison.Response{status_code: ^success_status_code, body: body}} ->
+
+      {:ok, response = %HTTPoison.Response{status_code: ^success_status_code, body: body}} ->
         {:ok, Poison.Parser.parse!(body), response}
-      {:ok, _response=%HTTPoison.Response{body: body}} ->
+
+      {:ok, _response = %HTTPoison.Response{body: body}} ->
         reason = Poison.Parser.parse!(body)["message"]
         {:error, reason}
+
       {:error, %HTTPoison.Error{reason: reason}} ->
         {:error, %HTTPoison.Error{reason: reason}}
     end

@@ -68,7 +68,11 @@ defmodule AWS.Glacier do
   in the *Amazon Glacier Developer Guide*.
   """
   def abort_multipart_upload(client, account_id, upload_id, vault_name, input, options \\ []) do
-    url = "/#{URI.encode(account_id)}/vaults/#{URI.encode(vault_name)}/multipart-uploads/#{URI.encode(upload_id)}"
+    url =
+      "/#{URI.encode(account_id)}/vaults/#{URI.encode(vault_name)}/multipart-uploads/#{
+        URI.encode(upload_id)
+      }"
+
     headers = []
     request(client, :delete, url, headers, input, options, 204)
   end
@@ -166,28 +170,39 @@ defmodule AWS.Glacier do
   in the *Amazon Glacier Developer Guide*.
   """
   def complete_multipart_upload(client, account_id, upload_id, vault_name, input, options \\ []) do
-    url = "/#{URI.encode(account_id)}/vaults/#{URI.encode(vault_name)}/multipart-uploads/#{URI.encode(upload_id)}"
+    url =
+      "/#{URI.encode(account_id)}/vaults/#{URI.encode(vault_name)}/multipart-uploads/#{
+        URI.encode(upload_id)
+      }"
+
     headers = []
-    if Dict.has_key?(input, "archiveSize") do
-      headers = [{"x-amz-archive-size", input["archiveSize"]}|headers]
-      input = Dict.delete(input, "archiveSize")
+
+    if Map.has_key?(input, "archiveSize") do
+      headers = [{"x-amz-archive-size", input["archiveSize"]} | headers]
+      input = Map.delete(input, "archiveSize")
     end
-    if Dict.has_key?(input, "checksum") do
-      headers = [{"x-amz-sha256-tree-hash", input["checksum"]}|headers]
-      input = Dict.delete(input, "checksum")
+
+    if Map.has_key?(input, "checksum") do
+      headers = [{"x-amz-sha256-tree-hash", input["checksum"]} | headers]
+      input = Map.delete(input, "checksum")
     end
+
     case request(client, :post, url, headers, input, options, 201) do
       {:ok, body, response} ->
         if !is_nil(response.headers["x-amz-archive-id"]) do
           body = %{body | "archiveId" => response.headers["x-amz-archive-id"]}
         end
+
         if !is_nil(response.headers["x-amz-sha256-tree-hash"]) do
           body = %{body | "checksum" => response.headers["x-amz-sha256-tree-hash"]}
         end
+
         if !is_nil(response.headers["Location"]) do
           body = %{body | "location" => response.headers["Location"]}
         end
+
         {:ok, body, response}
+
       result ->
         result
     end
@@ -212,7 +227,11 @@ defmodule AWS.Glacier do
   the `InProgress` state, the operation throws an `InvalidParameter` error.
   """
   def complete_vault_lock(client, account_id, lock_id, vault_name, input, options \\ []) do
-    url = "/#{URI.encode(account_id)}/vaults/#{URI.encode(vault_name)}/lock-policy/#{URI.encode(lock_id)}"
+    url =
+      "/#{URI.encode(account_id)}/vaults/#{URI.encode(vault_name)}/lock-policy/#{
+        URI.encode(lock_id)
+      }"
+
     headers = []
     request(client, :post, url, headers, input, options, 204)
   end
@@ -249,12 +268,15 @@ defmodule AWS.Glacier do
   def create_vault(client, account_id, vault_name, input, options \\ []) do
     url = "/#{URI.encode(account_id)}/vaults/#{URI.encode(vault_name)}"
     headers = []
+
     case request(client, :put, url, headers, input, options, 201) do
       {:ok, body, response} ->
         if !is_nil(response.headers["Location"]) do
           body = %{body | "location" => response.headers["Location"]}
         end
+
         {:ok, body, response}
+
       result ->
         result
     end
@@ -292,7 +314,11 @@ defmodule AWS.Glacier do
   in the *Amazon Glacier Developer Guide*.
   """
   def delete_archive(client, account_id, archive_id, vault_name, input, options \\ []) do
-    url = "/#{URI.encode(account_id)}/vaults/#{URI.encode(vault_name)}/archives/#{URI.encode(archive_id)}"
+    url =
+      "/#{URI.encode(account_id)}/vaults/#{URI.encode(vault_name)}/archives/#{
+        URI.encode(archive_id)
+      }"
+
     headers = []
     request(client, :delete, url, headers, input, options, 204)
   end
@@ -507,29 +533,39 @@ defmodule AWS.Glacier do
   ](http://docs.aws.amazon.com/amazonglacier/latest/dev/api-job-output-get.html)
   """
   def get_job_output(client, account_id, job_id, vault_name, range \\ nil, options \\ []) do
-    url = "/#{URI.encode(account_id)}/vaults/#{URI.encode(vault_name)}/jobs/#{URI.encode(job_id)}/output"
+    url =
+      "/#{URI.encode(account_id)}/vaults/#{URI.encode(vault_name)}/jobs/#{URI.encode(job_id)}/output"
+
     headers = []
+
     if !is_nil(range) do
-      headers = [{"Range", range}|headers]
+      headers = [{"Range", range} | headers]
     end
+
     case request(client, :get, url, headers, nil, options, nil) do
       {:ok, body, response} ->
         if !is_nil(response.headers["Accept-Ranges"]) do
           body = %{body | "acceptRanges" => response.headers["Accept-Ranges"]}
         end
+
         if !is_nil(response.headers["x-amz-archive-description"]) do
           body = %{body | "archiveDescription" => response.headers["x-amz-archive-description"]}
         end
+
         if !is_nil(response.headers["x-amz-sha256-tree-hash"]) do
           body = %{body | "checksum" => response.headers["x-amz-sha256-tree-hash"]}
         end
+
         if !is_nil(response.headers["Content-Range"]) do
           body = %{body | "contentRange" => response.headers["Content-Range"]}
         end
+
         if !is_nil(response.headers["Content-Type"]) do
           body = %{body | "contentType" => response.headers["Content-Type"]}
         end
+
         {:ok, body, response}
+
       result ->
         result
     end
@@ -768,15 +804,19 @@ defmodule AWS.Glacier do
   def initiate_job(client, account_id, vault_name, input, options \\ []) do
     url = "/#{URI.encode(account_id)}/vaults/#{URI.encode(vault_name)}/jobs"
     headers = []
+
     case request(client, :post, url, headers, input, options, 202) do
       {:ok, body, response} ->
         if !is_nil(response.headers["x-amz-job-id"]) do
           body = %{body | "jobId" => response.headers["x-amz-job-id"]}
         end
+
         if !is_nil(response.headers["Location"]) do
           body = %{body | "location" => response.headers["Location"]}
         end
+
         {:ok, body, response}
+
       result ->
         result
     end
@@ -826,23 +866,29 @@ defmodule AWS.Glacier do
   def initiate_multipart_upload(client, account_id, vault_name, input, options \\ []) do
     url = "/#{URI.encode(account_id)}/vaults/#{URI.encode(vault_name)}/multipart-uploads"
     headers = []
-    if Dict.has_key?(input, "archiveDescription") do
-      headers = [{"x-amz-archive-description", input["archiveDescription"]}|headers]
-      input = Dict.delete(input, "archiveDescription")
+
+    if Map.has_key?(input, "archiveDescription") do
+      headers = [{"x-amz-archive-description", input["archiveDescription"]} | headers]
+      input = Map.delete(input, "archiveDescription")
     end
-    if Dict.has_key?(input, "partSize") do
-      headers = [{"x-amz-part-size", input["partSize"]}|headers]
-      input = Dict.delete(input, "partSize")
+
+    if Map.has_key?(input, "partSize") do
+      headers = [{"x-amz-part-size", input["partSize"]} | headers]
+      input = Map.delete(input, "partSize")
     end
+
     case request(client, :post, url, headers, input, options, 201) do
       {:ok, body, response} ->
         if !is_nil(response.headers["Location"]) do
           body = %{body | "location" => response.headers["Location"]}
         end
+
         if !is_nil(response.headers["x-amz-multipart-upload-id"]) do
           body = %{body | "uploadId" => response.headers["x-amz-multipart-upload-id"]}
         end
+
         {:ok, body, response}
+
       result ->
         result
     end
@@ -886,12 +932,15 @@ defmodule AWS.Glacier do
   def initiate_vault_lock(client, account_id, vault_name, input, options \\ []) do
     url = "/#{URI.encode(account_id)}/vaults/#{URI.encode(vault_name)}/lock-policy"
     headers = []
+
     case request(client, :post, url, headers, input, options, 201) do
       {:ok, body, response} ->
         if !is_nil(response.headers["x-amz-lock-id"]) do
           body = %{body | "lockId" => response.headers["x-amz-lock-id"]}
         end
+
         {:ok, body, response}
+
       result ->
         result
     end
@@ -1020,7 +1069,11 @@ defmodule AWS.Glacier do
   in the *Amazon Glacier Developer Guide*.
   """
   def list_parts(client, account_id, upload_id, vault_name, options \\ []) do
-    url = "/#{URI.encode(account_id)}/vaults/#{URI.encode(vault_name)}/multipart-uploads/#{URI.encode(upload_id)}"
+    url =
+      "/#{URI.encode(account_id)}/vaults/#{URI.encode(vault_name)}/multipart-uploads/#{
+        URI.encode(upload_id)
+      }"
+
     headers = []
     request(client, :get, url, headers, nil, options, nil)
   end
@@ -1086,12 +1139,15 @@ defmodule AWS.Glacier do
   def purchase_provisioned_capacity(client, account_id, input, options \\ []) do
     url = "/#{URI.encode(account_id)}/provisioned-capacity"
     headers = []
+
     case request(client, :post, url, headers, input, options, 201) do
       {:ok, body, response} ->
         if !is_nil(response.headers["x-amz-capacity-id"]) do
           body = %{body | "capacityId" => response.headers["x-amz-capacity-id"]}
         end
+
         {:ok, body, response}
+
       result ->
         result
     end
@@ -1235,26 +1291,33 @@ defmodule AWS.Glacier do
   def upload_archive(client, account_id, vault_name, input, options \\ []) do
     url = "/#{URI.encode(account_id)}/vaults/#{URI.encode(vault_name)}/archives"
     headers = []
-    if Dict.has_key?(input, "archiveDescription") do
-      headers = [{"x-amz-archive-description", input["archiveDescription"]}|headers]
-      input = Dict.delete(input, "archiveDescription")
+
+    if Map.has_key?(input, "archiveDescription") do
+      headers = [{"x-amz-archive-description", input["archiveDescription"]} | headers]
+      input = Map.delete(input, "archiveDescription")
     end
-    if Dict.has_key?(input, "checksum") do
-      headers = [{"x-amz-sha256-tree-hash", input["checksum"]}|headers]
-      input = Dict.delete(input, "checksum")
+
+    if Map.has_key?(input, "checksum") do
+      headers = [{"x-amz-sha256-tree-hash", input["checksum"]} | headers]
+      input = Map.delete(input, "checksum")
     end
+
     case request(client, :post, url, headers, input, options, 201) do
       {:ok, body, response} ->
         if !is_nil(response.headers["x-amz-archive-id"]) do
           body = %{body | "archiveId" => response.headers["x-amz-archive-id"]}
         end
+
         if !is_nil(response.headers["x-amz-sha256-tree-hash"]) do
           body = %{body | "checksum" => response.headers["x-amz-sha256-tree-hash"]}
         end
+
         if !is_nil(response.headers["Location"]) do
           body = %{body | "location" => response.headers["Location"]}
         end
+
         {:ok, body, response}
+
       result ->
         result
     end
@@ -1312,22 +1375,31 @@ defmodule AWS.Glacier do
   in the *Amazon Glacier Developer Guide*.
   """
   def upload_multipart_part(client, account_id, upload_id, vault_name, input, options \\ []) do
-    url = "/#{URI.encode(account_id)}/vaults/#{URI.encode(vault_name)}/multipart-uploads/#{URI.encode(upload_id)}"
+    url =
+      "/#{URI.encode(account_id)}/vaults/#{URI.encode(vault_name)}/multipart-uploads/#{
+        URI.encode(upload_id)
+      }"
+
     headers = []
-    if Dict.has_key?(input, "checksum") do
-      headers = [{"x-amz-sha256-tree-hash", input["checksum"]}|headers]
-      input = Dict.delete(input, "checksum")
+
+    if Map.has_key?(input, "checksum") do
+      headers = [{"x-amz-sha256-tree-hash", input["checksum"]} | headers]
+      input = Map.delete(input, "checksum")
     end
-    if Dict.has_key?(input, "range") do
-      headers = [{"Content-Range", input["range"]}|headers]
-      input = Dict.delete(input, "range")
+
+    if Map.has_key?(input, "range") do
+      headers = [{"Content-Range", input["range"]} | headers]
+      input = Map.delete(input, "range")
     end
+
     case request(client, :put, url, headers, input, options, 204) do
       {:ok, body, response} ->
         if !is_nil(response.headers["x-amz-sha256-tree-hash"]) do
           body = %{body | "checksum" => response.headers["x-amz-sha256-tree-hash"]}
         end
+
         {:ok, body, response}
+
       result ->
         result
     end
@@ -1337,9 +1409,13 @@ defmodule AWS.Glacier do
     client = %{client | service: "glacier"}
     host = get_host("glacier", client)
     url = get_url(host, url, client)
-    headers = Enum.concat([{"Host", host},
-                           {"Content-Type", "application/x-amz-json-1.1"}],
-                          headers)
+
+    headers =
+      Enum.concat(
+        [{"Host", host}, {"Content-Type", "application/x-amz-json-1.1"}],
+        headers
+      )
+
     payload = encode_payload(input)
     headers = AWS.Request.sign_v4(client, method, url, headers, payload)
     perform_request(method, url, payload, headers, options, success_status_code)
@@ -1347,17 +1423,22 @@ defmodule AWS.Glacier do
 
   defp perform_request(method, url, payload, headers, options, nil) do
     case HTTPoison.request(method, url, payload, headers, options) do
-      {:ok, response=%HTTPoison.Response{status_code: 200, body: ""}} ->
+      {:ok, response = %HTTPoison.Response{status_code: 200, body: ""}} ->
         {:ok, response}
-      {:ok, response=%HTTPoison.Response{status_code: 200, body: body}} ->
+
+      {:ok, response = %HTTPoison.Response{status_code: 200, body: body}} ->
         {:ok, Poison.Parser.parse!(body), response}
-      {:ok, response=%HTTPoison.Response{status_code: 202, body: body}} ->
+
+      {:ok, response = %HTTPoison.Response{status_code: 202, body: body}} ->
         {:ok, Poison.Parser.parse!(body), response}
-      {:ok, response=%HTTPoison.Response{status_code: 204, body: body}} ->
+
+      {:ok, response = %HTTPoison.Response{status_code: 204, body: body}} ->
         {:ok, Poison.Parser.parse!(body), response}
-      {:ok, _response=%HTTPoison.Response{body: body}} ->
+
+      {:ok, _response = %HTTPoison.Response{body: body}} ->
         reason = Poison.Parser.parse!(body)["message"]
         {:error, reason}
+
       {:error, %HTTPoison.Error{reason: reason}} ->
         {:error, %HTTPoison.Error{reason: reason}}
     end
@@ -1365,13 +1446,16 @@ defmodule AWS.Glacier do
 
   defp perform_request(method, url, payload, headers, options, success_status_code) do
     case HTTPoison.request(method, url, payload, headers, options) do
-      {:ok, response=%HTTPoison.Response{status_code: ^success_status_code, body: ""}} ->
+      {:ok, response = %HTTPoison.Response{status_code: ^success_status_code, body: ""}} ->
         {:ok, nil, response}
-      {:ok, response=%HTTPoison.Response{status_code: ^success_status_code, body: body}} ->
+
+      {:ok, response = %HTTPoison.Response{status_code: ^success_status_code, body: body}} ->
         {:ok, Poison.Parser.parse!(body), response}
-      {:ok, _response=%HTTPoison.Response{body: body}} ->
+
+      {:ok, _response = %HTTPoison.Response{body: body}} ->
         reason = Poison.Parser.parse!(body)["message"]
         {:error, reason}
+
       {:error, %HTTPoison.Error{reason: reason}} ->
         {:error, %HTTPoison.Error{reason: reason}}
     end

@@ -282,27 +282,34 @@ defmodule AWS.Lambda do
   def invoke(client, function_name, input, options \\ []) do
     url = "/2015-03-31/functions/#{URI.encode(function_name)}/invocations"
     headers = []
-    if Dict.has_key?(input, "ClientContext") do
-      headers = [{"X-Amz-Client-Context", input["ClientContext"]}|headers]
-      input = Dict.delete(input, "ClientContext")
+
+    if Map.has_key?(input, "ClientContext") do
+      headers = [{"X-Amz-Client-Context", input["ClientContext"]} | headers]
+      input = Map.delete(input, "ClientContext")
     end
-    if Dict.has_key?(input, "InvocationType") do
-      headers = [{"X-Amz-Invocation-Type", input["InvocationType"]}|headers]
-      input = Dict.delete(input, "InvocationType")
+
+    if Map.has_key?(input, "InvocationType") do
+      headers = [{"X-Amz-Invocation-Type", input["InvocationType"]} | headers]
+      input = Map.delete(input, "InvocationType")
     end
-    if Dict.has_key?(input, "LogType") do
-      headers = [{"X-Amz-Log-Type", input["LogType"]}|headers]
-      input = Dict.delete(input, "LogType")
+
+    if Map.has_key?(input, "LogType") do
+      headers = [{"X-Amz-Log-Type", input["LogType"]} | headers]
+      input = Map.delete(input, "LogType")
     end
+
     case request(client, :post, url, headers, input, options, nil) do
       {:ok, body, response} ->
         if !is_nil(response.headers["X-Amz-Function-Error"]) do
           body = %{body | "FunctionError" => response.headers["X-Amz-Function-Error"]}
         end
+
         if !is_nil(response.headers["X-Amz-Log-Result"]) do
           body = %{body | "LogResult" => response.headers["X-Amz-Log-Result"]}
         end
+
         {:ok, body, response}
+
       result ->
         result
     end
@@ -510,9 +517,13 @@ defmodule AWS.Lambda do
     client = %{client | service: "lambda"}
     host = get_host("lambda", client)
     url = get_url(host, url, client)
-    headers = Enum.concat([{"Host", host},
-                           {"Content-Type", "application/x-amz-json-1.1"}],
-                          headers)
+
+    headers =
+      Enum.concat(
+        [{"Host", host}, {"Content-Type", "application/x-amz-json-1.1"}],
+        headers
+      )
+
     payload = encode_payload(input)
     headers = AWS.Request.sign_v4(client, method, url, headers, payload)
     perform_request(method, url, payload, headers, options, success_status_code)
@@ -520,17 +531,22 @@ defmodule AWS.Lambda do
 
   defp perform_request(method, url, payload, headers, options, nil) do
     case HTTPoison.request(method, url, payload, headers, options) do
-      {:ok, response=%HTTPoison.Response{status_code: 200, body: ""}} ->
+      {:ok, response = %HTTPoison.Response{status_code: 200, body: ""}} ->
         {:ok, response}
-      {:ok, response=%HTTPoison.Response{status_code: 200, body: body}} ->
+
+      {:ok, response = %HTTPoison.Response{status_code: 200, body: body}} ->
         {:ok, Poison.Parser.parse!(body), response}
-      {:ok, response=%HTTPoison.Response{status_code: 202, body: body}} ->
+
+      {:ok, response = %HTTPoison.Response{status_code: 202, body: body}} ->
         {:ok, Poison.Parser.parse!(body), response}
-      {:ok, response=%HTTPoison.Response{status_code: 204, body: body}} ->
+
+      {:ok, response = %HTTPoison.Response{status_code: 204, body: body}} ->
         {:ok, Poison.Parser.parse!(body), response}
-      {:ok, _response=%HTTPoison.Response{body: body}} ->
+
+      {:ok, _response = %HTTPoison.Response{body: body}} ->
         reason = Poison.Parser.parse!(body)["message"]
         {:error, reason}
+
       {:error, %HTTPoison.Error{reason: reason}} ->
         {:error, %HTTPoison.Error{reason: reason}}
     end
@@ -538,13 +554,16 @@ defmodule AWS.Lambda do
 
   defp perform_request(method, url, payload, headers, options, success_status_code) do
     case HTTPoison.request(method, url, payload, headers, options) do
-      {:ok, response=%HTTPoison.Response{status_code: ^success_status_code, body: ""}} ->
+      {:ok, response = %HTTPoison.Response{status_code: ^success_status_code, body: ""}} ->
         {:ok, nil, response}
-      {:ok, response=%HTTPoison.Response{status_code: ^success_status_code, body: body}} ->
+
+      {:ok, response = %HTTPoison.Response{status_code: ^success_status_code, body: body}} ->
         {:ok, Poison.Parser.parse!(body), response}
-      {:ok, _response=%HTTPoison.Response{body: body}} ->
+
+      {:ok, _response = %HTTPoison.Response{body: body}} ->
         reason = Poison.Parser.parse!(body)["message"]
         {:error, reason}
+
       {:error, %HTTPoison.Error{reason: reason}} ->
         {:error, %HTTPoison.Error{reason: reason}}
     end

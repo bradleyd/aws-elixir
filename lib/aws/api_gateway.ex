@@ -191,7 +191,11 @@ defmodule AWS.APIGateway do
 
   """
   def delete_documentation_part(client, documentation_part_id, rest_api_id, input, options \\ []) do
-    url = "/restapis/#{URI.encode(rest_api_id)}/documentation/parts/#{URI.encode(documentation_part_id)}"
+    url =
+      "/restapis/#{URI.encode(rest_api_id)}/documentation/parts/#{
+        URI.encode(documentation_part_id)
+      }"
+
     headers = []
     request(client, :delete, url, headers, input, options, 202)
   end
@@ -199,8 +203,18 @@ defmodule AWS.APIGateway do
   @doc """
 
   """
-  def delete_documentation_version(client, documentation_version, rest_api_id, input, options \\ []) do
-    url = "/restapis/#{URI.encode(rest_api_id)}/documentation/versions/#{URI.encode(documentation_version)}"
+  def delete_documentation_version(
+        client,
+        documentation_version,
+        rest_api_id,
+        input,
+        options \\ []
+      ) do
+    url =
+      "/restapis/#{URI.encode(rest_api_id)}/documentation/versions/#{
+        URI.encode(documentation_version)
+      }"
+
     headers = []
     request(client, :delete, url, headers, input, options, 202)
   end
@@ -218,7 +232,11 @@ defmodule AWS.APIGateway do
   Represents a delete integration.
   """
   def delete_integration(client, http_method, resource_id, rest_api_id, input, options \\ []) do
-    url = "/restapis/#{URI.encode(rest_api_id)}/resources/#{URI.encode(resource_id)}/methods/#{URI.encode(http_method)}/integration"
+    url =
+      "/restapis/#{URI.encode(rest_api_id)}/resources/#{URI.encode(resource_id)}/methods/#{
+        URI.encode(http_method)
+      }/integration"
+
     headers = []
     request(client, :delete, url, headers, input, options, 204)
   end
@@ -226,8 +244,20 @@ defmodule AWS.APIGateway do
   @doc """
   Represents a delete integration response.
   """
-  def delete_integration_response(client, http_method, resource_id, rest_api_id, status_code, input, options \\ []) do
-    url = "/restapis/#{URI.encode(rest_api_id)}/resources/#{URI.encode(resource_id)}/methods/#{URI.encode(http_method)}/integration/responses/#{URI.encode(status_code)}"
+  def delete_integration_response(
+        client,
+        http_method,
+        resource_id,
+        rest_api_id,
+        status_code,
+        input,
+        options \\ []
+      ) do
+    url =
+      "/restapis/#{URI.encode(rest_api_id)}/resources/#{URI.encode(resource_id)}/methods/#{
+        URI.encode(http_method)
+      }/integration/responses/#{URI.encode(status_code)}"
+
     headers = []
     request(client, :delete, url, headers, input, options, 204)
   end
@@ -236,7 +266,11 @@ defmodule AWS.APIGateway do
   Deletes an existing `Method` resource.
   """
   def delete_method(client, http_method, resource_id, rest_api_id, input, options \\ []) do
-    url = "/restapis/#{URI.encode(rest_api_id)}/resources/#{URI.encode(resource_id)}/methods/#{URI.encode(http_method)}"
+    url =
+      "/restapis/#{URI.encode(rest_api_id)}/resources/#{URI.encode(resource_id)}/methods/#{
+        URI.encode(http_method)
+      }"
+
     headers = []
     request(client, :delete, url, headers, input, options, 204)
   end
@@ -244,8 +278,20 @@ defmodule AWS.APIGateway do
   @doc """
   Deletes an existing `MethodResponse` resource.
   """
-  def delete_method_response(client, http_method, resource_id, rest_api_id, status_code, input, options \\ []) do
-    url = "/restapis/#{URI.encode(rest_api_id)}/resources/#{URI.encode(resource_id)}/methods/#{URI.encode(http_method)}/responses/#{URI.encode(status_code)}"
+  def delete_method_response(
+        client,
+        http_method,
+        resource_id,
+        rest_api_id,
+        status_code,
+        input,
+        options \\ []
+      ) do
+    url =
+      "/restapis/#{URI.encode(rest_api_id)}/resources/#{URI.encode(resource_id)}/methods/#{
+        URI.encode(http_method)
+      }/responses/#{URI.encode(status_code)}"
+
     headers = []
     request(client, :delete, url, headers, input, options, 204)
   end
@@ -309,7 +355,9 @@ defmodule AWS.APIGateway do
   Flushes all authorizer cache entries on a stage.
   """
   def flush_stage_authorizers_cache(client, rest_api_id, stage_name, input, options \\ []) do
-    url = "/restapis/#{URI.encode(rest_api_id)}/stages/#{URI.encode(stage_name)}/cache/authorizers"
+    url =
+      "/restapis/#{URI.encode(rest_api_id)}/stages/#{URI.encode(stage_name)}/cache/authorizers"
+
     headers = []
     request(client, :delete, url, headers, input, options, 202)
   end
@@ -441,7 +489,11 @@ defmodule AWS.APIGateway do
 
   """
   def get_documentation_part(client, documentation_part_id, rest_api_id, options \\ []) do
-    url = "/restapis/#{URI.encode(rest_api_id)}/documentation/parts/#{URI.encode(documentation_part_id)}"
+    url =
+      "/restapis/#{URI.encode(rest_api_id)}/documentation/parts/#{
+        URI.encode(documentation_part_id)
+      }"
+
     headers = []
     request(client, :get, url, headers, nil, options, nil)
   end
@@ -459,7 +511,11 @@ defmodule AWS.APIGateway do
 
   """
   def get_documentation_version(client, documentation_version, rest_api_id, options \\ []) do
-    url = "/restapis/#{URI.encode(rest_api_id)}/documentation/versions/#{URI.encode(documentation_version)}"
+    url =
+      "/restapis/#{URI.encode(rest_api_id)}/documentation/versions/#{
+        URI.encode(documentation_version)
+      }"
+
     headers = []
     request(client, :get, url, headers, nil, options, nil)
   end
@@ -496,20 +552,29 @@ defmodule AWS.APIGateway do
   Exports a deployed version of a `RestApi` in a specified format.
   """
   def get_export(client, export_type, rest_api_id, stage_name, accepts \\ nil, options \\ []) do
-    url = "/restapis/#{URI.encode(rest_api_id)}/stages/#{URI.encode(stage_name)}/exports/#{URI.encode(export_type)}"
+    url =
+      "/restapis/#{URI.encode(rest_api_id)}/stages/#{URI.encode(stage_name)}/exports/#{
+        URI.encode(export_type)
+      }"
+
     headers = []
+
     if !is_nil(accepts) do
-      headers = [{"Accept", accepts}|headers]
+      headers = [{"Accept", accepts} | headers]
     end
+
     case request(client, :get, url, headers, nil, options, 200) do
       {:ok, body, response} ->
         if !is_nil(response.headers["Content-Disposition"]) do
           body = %{body | "contentDisposition" => response.headers["Content-Disposition"]}
         end
+
         if !is_nil(response.headers["Content-Type"]) do
           body = %{body | "contentType" => response.headers["Content-Type"]}
         end
+
         {:ok, body, response}
+
       result ->
         result
     end
@@ -519,7 +584,11 @@ defmodule AWS.APIGateway do
   Represents a get integration.
   """
   def get_integration(client, http_method, resource_id, rest_api_id, options \\ []) do
-    url = "/restapis/#{URI.encode(rest_api_id)}/resources/#{URI.encode(resource_id)}/methods/#{URI.encode(http_method)}/integration"
+    url =
+      "/restapis/#{URI.encode(rest_api_id)}/resources/#{URI.encode(resource_id)}/methods/#{
+        URI.encode(http_method)
+      }/integration"
+
     headers = []
     request(client, :get, url, headers, nil, options, nil)
   end
@@ -527,8 +596,19 @@ defmodule AWS.APIGateway do
   @doc """
   Represents a get integration response.
   """
-  def get_integration_response(client, http_method, resource_id, rest_api_id, status_code, options \\ []) do
-    url = "/restapis/#{URI.encode(rest_api_id)}/resources/#{URI.encode(resource_id)}/methods/#{URI.encode(http_method)}/integration/responses/#{URI.encode(status_code)}"
+  def get_integration_response(
+        client,
+        http_method,
+        resource_id,
+        rest_api_id,
+        status_code,
+        options \\ []
+      ) do
+    url =
+      "/restapis/#{URI.encode(rest_api_id)}/resources/#{URI.encode(resource_id)}/methods/#{
+        URI.encode(http_method)
+      }/integration/responses/#{URI.encode(status_code)}"
+
     headers = []
     request(client, :get, url, headers, nil, options, nil)
   end
@@ -537,7 +617,11 @@ defmodule AWS.APIGateway do
   Describe an existing `Method` resource.
   """
   def get_method(client, http_method, resource_id, rest_api_id, options \\ []) do
-    url = "/restapis/#{URI.encode(rest_api_id)}/resources/#{URI.encode(resource_id)}/methods/#{URI.encode(http_method)}"
+    url =
+      "/restapis/#{URI.encode(rest_api_id)}/resources/#{URI.encode(resource_id)}/methods/#{
+        URI.encode(http_method)
+      }"
+
     headers = []
     request(client, :get, url, headers, nil, options, nil)
   end
@@ -545,8 +629,19 @@ defmodule AWS.APIGateway do
   @doc """
   Describes a `MethodResponse` resource.
   """
-  def get_method_response(client, http_method, resource_id, rest_api_id, status_code, options \\ []) do
-    url = "/restapis/#{URI.encode(rest_api_id)}/resources/#{URI.encode(resource_id)}/methods/#{URI.encode(http_method)}/responses/#{URI.encode(status_code)}"
+  def get_method_response(
+        client,
+        http_method,
+        resource_id,
+        rest_api_id,
+        status_code,
+        options \\ []
+      ) do
+    url =
+      "/restapis/#{URI.encode(rest_api_id)}/resources/#{URI.encode(resource_id)}/methods/#{
+        URI.encode(http_method)
+      }/responses/#{URI.encode(status_code)}"
+
     headers = []
     request(client, :get, url, headers, nil, options, nil)
   end
@@ -619,17 +714,25 @@ defmodule AWS.APIGateway do
   Generates a client SDK for a `RestApi` and `Stage`.
   """
   def get_sdk(client, rest_api_id, sdk_type, stage_name, options \\ []) do
-    url = "/restapis/#{URI.encode(rest_api_id)}/stages/#{URI.encode(stage_name)}/sdks/#{URI.encode(sdk_type)}"
+    url =
+      "/restapis/#{URI.encode(rest_api_id)}/stages/#{URI.encode(stage_name)}/sdks/#{
+        URI.encode(sdk_type)
+      }"
+
     headers = []
+
     case request(client, :get, url, headers, nil, options, 200) do
       {:ok, body, response} ->
         if !is_nil(response.headers["Content-Disposition"]) do
           body = %{body | "contentDisposition" => response.headers["Content-Disposition"]}
         end
+
         if !is_nil(response.headers["Content-Type"]) do
           body = %{body | "contentType" => response.headers["Content-Type"]}
         end
+
         {:ok, body, response}
+
       result ->
         result
     end
@@ -749,7 +852,11 @@ defmodule AWS.APIGateway do
   Represents a put integration.
   """
   def put_integration(client, http_method, resource_id, rest_api_id, input, options \\ []) do
-    url = "/restapis/#{URI.encode(rest_api_id)}/resources/#{URI.encode(resource_id)}/methods/#{URI.encode(http_method)}/integration"
+    url =
+      "/restapis/#{URI.encode(rest_api_id)}/resources/#{URI.encode(resource_id)}/methods/#{
+        URI.encode(http_method)
+      }/integration"
+
     headers = []
     request(client, :put, url, headers, input, options, 201)
   end
@@ -757,8 +864,20 @@ defmodule AWS.APIGateway do
   @doc """
   Represents a put integration.
   """
-  def put_integration_response(client, http_method, resource_id, rest_api_id, status_code, input, options \\ []) do
-    url = "/restapis/#{URI.encode(rest_api_id)}/resources/#{URI.encode(resource_id)}/methods/#{URI.encode(http_method)}/integration/responses/#{URI.encode(status_code)}"
+  def put_integration_response(
+        client,
+        http_method,
+        resource_id,
+        rest_api_id,
+        status_code,
+        input,
+        options \\ []
+      ) do
+    url =
+      "/restapis/#{URI.encode(rest_api_id)}/resources/#{URI.encode(resource_id)}/methods/#{
+        URI.encode(http_method)
+      }/integration/responses/#{URI.encode(status_code)}"
+
     headers = []
     request(client, :put, url, headers, input, options, 201)
   end
@@ -767,7 +886,11 @@ defmodule AWS.APIGateway do
   Add a method to an existing `Resource` resource.
   """
   def put_method(client, http_method, resource_id, rest_api_id, input, options \\ []) do
-    url = "/restapis/#{URI.encode(rest_api_id)}/resources/#{URI.encode(resource_id)}/methods/#{URI.encode(http_method)}"
+    url =
+      "/restapis/#{URI.encode(rest_api_id)}/resources/#{URI.encode(resource_id)}/methods/#{
+        URI.encode(http_method)
+      }"
+
     headers = []
     request(client, :put, url, headers, input, options, 201)
   end
@@ -775,8 +898,20 @@ defmodule AWS.APIGateway do
   @doc """
   Adds a `MethodResponse` to an existing `Method` resource.
   """
-  def put_method_response(client, http_method, resource_id, rest_api_id, status_code, input, options \\ []) do
-    url = "/restapis/#{URI.encode(rest_api_id)}/resources/#{URI.encode(resource_id)}/methods/#{URI.encode(http_method)}/responses/#{URI.encode(status_code)}"
+  def put_method_response(
+        client,
+        http_method,
+        resource_id,
+        rest_api_id,
+        status_code,
+        input,
+        options \\ []
+      ) do
+    url =
+      "/restapis/#{URI.encode(rest_api_id)}/resources/#{URI.encode(resource_id)}/methods/#{
+        URI.encode(http_method)
+      }/responses/#{URI.encode(status_code)}"
+
     headers = []
     request(client, :put, url, headers, input, options, 201)
   end
@@ -812,7 +947,11 @@ defmodule AWS.APIGateway do
   parameters, and an incoming request body.
   """
   def test_invoke_method(client, http_method, resource_id, rest_api_id, input, options \\ []) do
-    url = "/restapis/#{URI.encode(rest_api_id)}/resources/#{URI.encode(resource_id)}/methods/#{URI.encode(http_method)}"
+    url =
+      "/restapis/#{URI.encode(rest_api_id)}/resources/#{URI.encode(resource_id)}/methods/#{
+        URI.encode(http_method)
+      }"
+
     headers = []
     request(client, :post, url, headers, input, options, nil)
   end
@@ -878,7 +1017,11 @@ defmodule AWS.APIGateway do
 
   """
   def update_documentation_part(client, documentation_part_id, rest_api_id, input, options \\ []) do
-    url = "/restapis/#{URI.encode(rest_api_id)}/documentation/parts/#{URI.encode(documentation_part_id)}"
+    url =
+      "/restapis/#{URI.encode(rest_api_id)}/documentation/parts/#{
+        URI.encode(documentation_part_id)
+      }"
+
     headers = []
     request(client, :patch, url, headers, input, options, nil)
   end
@@ -886,8 +1029,18 @@ defmodule AWS.APIGateway do
   @doc """
 
   """
-  def update_documentation_version(client, documentation_version, rest_api_id, input, options \\ []) do
-    url = "/restapis/#{URI.encode(rest_api_id)}/documentation/versions/#{URI.encode(documentation_version)}"
+  def update_documentation_version(
+        client,
+        documentation_version,
+        rest_api_id,
+        input,
+        options \\ []
+      ) do
+    url =
+      "/restapis/#{URI.encode(rest_api_id)}/documentation/versions/#{
+        URI.encode(documentation_version)
+      }"
+
     headers = []
     request(client, :patch, url, headers, input, options, nil)
   end
@@ -905,7 +1058,11 @@ defmodule AWS.APIGateway do
   Represents an update integration.
   """
   def update_integration(client, http_method, resource_id, rest_api_id, input, options \\ []) do
-    url = "/restapis/#{URI.encode(rest_api_id)}/resources/#{URI.encode(resource_id)}/methods/#{URI.encode(http_method)}/integration"
+    url =
+      "/restapis/#{URI.encode(rest_api_id)}/resources/#{URI.encode(resource_id)}/methods/#{
+        URI.encode(http_method)
+      }/integration"
+
     headers = []
     request(client, :patch, url, headers, input, options, nil)
   end
@@ -913,8 +1070,20 @@ defmodule AWS.APIGateway do
   @doc """
   Represents an update integration response.
   """
-  def update_integration_response(client, http_method, resource_id, rest_api_id, status_code, input, options \\ []) do
-    url = "/restapis/#{URI.encode(rest_api_id)}/resources/#{URI.encode(resource_id)}/methods/#{URI.encode(http_method)}/integration/responses/#{URI.encode(status_code)}"
+  def update_integration_response(
+        client,
+        http_method,
+        resource_id,
+        rest_api_id,
+        status_code,
+        input,
+        options \\ []
+      ) do
+    url =
+      "/restapis/#{URI.encode(rest_api_id)}/resources/#{URI.encode(resource_id)}/methods/#{
+        URI.encode(http_method)
+      }/integration/responses/#{URI.encode(status_code)}"
+
     headers = []
     request(client, :patch, url, headers, input, options, nil)
   end
@@ -923,7 +1092,11 @@ defmodule AWS.APIGateway do
   Updates an existing `Method` resource.
   """
   def update_method(client, http_method, resource_id, rest_api_id, input, options \\ []) do
-    url = "/restapis/#{URI.encode(rest_api_id)}/resources/#{URI.encode(resource_id)}/methods/#{URI.encode(http_method)}"
+    url =
+      "/restapis/#{URI.encode(rest_api_id)}/resources/#{URI.encode(resource_id)}/methods/#{
+        URI.encode(http_method)
+      }"
+
     headers = []
     request(client, :patch, url, headers, input, options, nil)
   end
@@ -931,8 +1104,20 @@ defmodule AWS.APIGateway do
   @doc """
   Updates an existing `MethodResponse` resource.
   """
-  def update_method_response(client, http_method, resource_id, rest_api_id, status_code, input, options \\ []) do
-    url = "/restapis/#{URI.encode(rest_api_id)}/resources/#{URI.encode(resource_id)}/methods/#{URI.encode(http_method)}/responses/#{URI.encode(status_code)}"
+  def update_method_response(
+        client,
+        http_method,
+        resource_id,
+        rest_api_id,
+        status_code,
+        input,
+        options \\ []
+      ) do
+    url =
+      "/restapis/#{URI.encode(rest_api_id)}/resources/#{URI.encode(resource_id)}/methods/#{
+        URI.encode(http_method)
+      }/responses/#{URI.encode(status_code)}"
+
     headers = []
     request(client, :patch, url, headers, input, options, 201)
   end
@@ -996,9 +1181,13 @@ defmodule AWS.APIGateway do
     client = %{client | service: "apigateway"}
     host = get_host("apigateway", client)
     url = get_url(host, url, client)
-    headers = Enum.concat([{"Host", host},
-                           {"Content-Type", "application/x-amz-json-1.1"}],
-                          headers)
+
+    headers =
+      Enum.concat(
+        [{"Host", host}, {"Content-Type", "application/x-amz-json-1.1"}],
+        headers
+      )
+
     payload = encode_payload(input)
     headers = AWS.Request.sign_v4(client, method, url, headers, payload)
     perform_request(method, url, payload, headers, options, success_status_code)
@@ -1006,17 +1195,22 @@ defmodule AWS.APIGateway do
 
   defp perform_request(method, url, payload, headers, options, nil) do
     case HTTPoison.request(method, url, payload, headers, options) do
-      {:ok, response=%HTTPoison.Response{status_code: 200, body: ""}} ->
+      {:ok, response = %HTTPoison.Response{status_code: 200, body: ""}} ->
         {:ok, response}
-      {:ok, response=%HTTPoison.Response{status_code: 200, body: body}} ->
+
+      {:ok, response = %HTTPoison.Response{status_code: 200, body: body}} ->
         {:ok, Poison.Parser.parse!(body), response}
-      {:ok, response=%HTTPoison.Response{status_code: 202, body: body}} ->
+
+      {:ok, response = %HTTPoison.Response{status_code: 202, body: body}} ->
         {:ok, Poison.Parser.parse!(body), response}
-      {:ok, response=%HTTPoison.Response{status_code: 204, body: body}} ->
+
+      {:ok, response = %HTTPoison.Response{status_code: 204, body: body}} ->
         {:ok, Poison.Parser.parse!(body), response}
-      {:ok, _response=%HTTPoison.Response{body: body}} ->
+
+      {:ok, _response = %HTTPoison.Response{body: body}} ->
         reason = Poison.Parser.parse!(body)["message"]
         {:error, reason}
+
       {:error, %HTTPoison.Error{reason: reason}} ->
         {:error, %HTTPoison.Error{reason: reason}}
     end
@@ -1024,13 +1218,16 @@ defmodule AWS.APIGateway do
 
   defp perform_request(method, url, payload, headers, options, success_status_code) do
     case HTTPoison.request(method, url, payload, headers, options) do
-      {:ok, response=%HTTPoison.Response{status_code: ^success_status_code, body: ""}} ->
+      {:ok, response = %HTTPoison.Response{status_code: ^success_status_code, body: ""}} ->
         {:ok, nil, response}
-      {:ok, response=%HTTPoison.Response{status_code: ^success_status_code, body: body}} ->
+
+      {:ok, response = %HTTPoison.Response{status_code: ^success_status_code, body: body}} ->
         {:ok, Poison.Parser.parse!(body), response}
-      {:ok, _response=%HTTPoison.Response{body: body}} ->
+
+      {:ok, _response = %HTTPoison.Response{body: body}} ->
         reason = Poison.Parser.parse!(body)["message"]
         {:error, reason}
+
       {:error, %HTTPoison.Error{reason: reason}} ->
         {:error, %HTTPoison.Error{reason: reason}}
     end

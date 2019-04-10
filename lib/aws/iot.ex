@@ -37,10 +37,12 @@ defmodule AWS.IoT do
   def attach_principal_policy(client, policy_name, input, options \\ []) do
     url = "/principal-policies/#{URI.encode(policy_name)}"
     headers = []
-    if Dict.has_key?(input, "principal") do
-      headers = [{"x-amzn-iot-principal", input["principal"]}|headers]
-      input = Dict.delete(input, "principal")
+
+    if Map.has_key?(input, "principal") do
+      headers = [{"x-amzn-iot-principal", input["principal"]} | headers]
+      input = Map.delete(input, "principal")
     end
+
     request(client, :put, url, headers, input, options, nil)
   end
 
@@ -50,10 +52,12 @@ defmodule AWS.IoT do
   def attach_thing_principal(client, thing_name, input, options \\ []) do
     url = "/things/#{URI.encode(thing_name)}/principals"
     headers = []
-    if Dict.has_key?(input, "principal") do
-      headers = [{"x-amzn-principal", input["principal"]}|headers]
-      input = Dict.delete(input, "principal")
+
+    if Map.has_key?(input, "principal") do
+      headers = [{"x-amzn-principal", input["principal"]} | headers]
+      input = Map.delete(input, "principal")
     end
+
     request(client, :put, url, headers, input, options, nil)
   end
 
@@ -351,10 +355,12 @@ defmodule AWS.IoT do
   def detach_principal_policy(client, policy_name, input, options \\ []) do
     url = "/principal-policies/#{URI.encode(policy_name)}"
     headers = []
-    if Dict.has_key?(input, "principal") do
-      headers = [{"x-amzn-iot-principal", input["principal"]}|headers]
-      input = Dict.delete(input, "principal")
+
+    if Map.has_key?(input, "principal") do
+      headers = [{"x-amzn-iot-principal", input["principal"]} | headers]
+      input = Map.delete(input, "principal")
     end
+
     request(client, :delete, url, headers, input, options, nil)
   end
 
@@ -364,10 +370,12 @@ defmodule AWS.IoT do
   def detach_thing_principal(client, thing_name, input, options \\ []) do
     url = "/things/#{URI.encode(thing_name)}/principals"
     headers = []
-    if Dict.has_key?(input, "principal") do
-      headers = [{"x-amzn-principal", input["principal"]}|headers]
-      input = Dict.delete(input, "principal")
+
+    if Map.has_key?(input, "principal") do
+      headers = [{"x-amzn-principal", input["principal"]} | headers]
+      input = Map.delete(input, "principal")
     end
+
     request(client, :delete, url, headers, input, options, nil)
   end
 
@@ -492,9 +500,11 @@ defmodule AWS.IoT do
   def list_policy_principals(client, policy_name \\ nil, options \\ []) do
     url = "/policy-principals"
     headers = []
+
     if !is_nil(policy_name) do
-      headers = [{"x-amzn-iot-policy", policy_name}|headers]
+      headers = [{"x-amzn-iot-policy", policy_name} | headers]
     end
+
     request(client, :get, url, headers, nil, options, nil)
   end
 
@@ -516,9 +526,11 @@ defmodule AWS.IoT do
   def list_principal_policies(client, principal \\ nil, options \\ []) do
     url = "/principal-policies"
     headers = []
+
     if !is_nil(principal) do
-      headers = [{"x-amzn-iot-principal", principal}|headers]
+      headers = [{"x-amzn-iot-principal", principal} | headers]
     end
+
     request(client, :get, url, headers, nil, options, nil)
   end
 
@@ -528,9 +540,11 @@ defmodule AWS.IoT do
   def list_principal_things(client, principal \\ nil, options \\ []) do
     url = "/principals/things"
     headers = []
+
     if !is_nil(principal) do
-      headers = [{"x-amzn-principal", principal}|headers]
+      headers = [{"x-amzn-principal", principal} | headers]
     end
+
     request(client, :get, url, headers, nil, options, nil)
   end
 
@@ -710,9 +724,13 @@ defmodule AWS.IoT do
     client = %{client | service: "execute-api"}
     host = get_host("iot", client)
     url = get_url(host, url, client)
-    headers = Enum.concat([{"Host", host},
-                           {"Content-Type", "application/x-amz-json-1.1"}],
-                          headers)
+
+    headers =
+      Enum.concat(
+        [{"Host", host}, {"Content-Type", "application/x-amz-json-1.1"}],
+        headers
+      )
+
     payload = encode_payload(input)
     headers = AWS.Request.sign_v4(client, method, url, headers, payload)
     perform_request(method, url, payload, headers, options, success_status_code)
@@ -720,17 +738,22 @@ defmodule AWS.IoT do
 
   defp perform_request(method, url, payload, headers, options, nil) do
     case HTTPoison.request(method, url, payload, headers, options) do
-      {:ok, response=%HTTPoison.Response{status_code: 200, body: ""}} ->
+      {:ok, response = %HTTPoison.Response{status_code: 200, body: ""}} ->
         {:ok, response}
-      {:ok, response=%HTTPoison.Response{status_code: 200, body: body}} ->
+
+      {:ok, response = %HTTPoison.Response{status_code: 200, body: body}} ->
         {:ok, Poison.Parser.parse!(body), response}
-      {:ok, response=%HTTPoison.Response{status_code: 202, body: body}} ->
+
+      {:ok, response = %HTTPoison.Response{status_code: 202, body: body}} ->
         {:ok, Poison.Parser.parse!(body), response}
-      {:ok, response=%HTTPoison.Response{status_code: 204, body: body}} ->
+
+      {:ok, response = %HTTPoison.Response{status_code: 204, body: body}} ->
         {:ok, Poison.Parser.parse!(body), response}
-      {:ok, _response=%HTTPoison.Response{body: body}} ->
+
+      {:ok, _response = %HTTPoison.Response{body: body}} ->
         reason = Poison.Parser.parse!(body)["message"]
         {:error, reason}
+
       {:error, %HTTPoison.Error{reason: reason}} ->
         {:error, %HTTPoison.Error{reason: reason}}
     end
@@ -738,13 +761,16 @@ defmodule AWS.IoT do
 
   defp perform_request(method, url, payload, headers, options, success_status_code) do
     case HTTPoison.request(method, url, payload, headers, options) do
-      {:ok, response=%HTTPoison.Response{status_code: ^success_status_code, body: ""}} ->
+      {:ok, response = %HTTPoison.Response{status_code: ^success_status_code, body: ""}} ->
         {:ok, nil, response}
-      {:ok, response=%HTTPoison.Response{status_code: ^success_status_code, body: body}} ->
+
+      {:ok, response = %HTTPoison.Response{status_code: ^success_status_code, body: body}} ->
         {:ok, Poison.Parser.parse!(body), response}
-      {:ok, _response=%HTTPoison.Response{body: body}} ->
+
+      {:ok, _response = %HTTPoison.Response{body: body}} ->
         reason = Poison.Parser.parse!(body)["message"]
         {:error, reason}
+
       {:error, %HTTPoison.Error{reason: reason}} ->
         {:error, %HTTPoison.Error{reason: reason}}
     end
