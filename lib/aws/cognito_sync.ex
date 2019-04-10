@@ -345,16 +345,16 @@ defmodule AWS.Cognito.Sync do
         {:ok, response}
 
       {:ok, response = %HTTPoison.Response{status_code: 200, body: body}} ->
-        {:ok, Poison.Parser.parse!(body), response}
+        {:ok, Poison.Parser.parse!(body, %{}), response}
 
       {:ok, response = %HTTPoison.Response{status_code: 202, body: body}} ->
-        {:ok, Poison.Parser.parse!(body), response}
+        {:ok, Poison.Parser.parse!(body, %{}), response}
 
       {:ok, response = %HTTPoison.Response{status_code: 204, body: body}} ->
-        {:ok, Poison.Parser.parse!(body), response}
+        {:ok, Poison.Parser.parse!(body, %{}), response}
 
       {:ok, _response = %HTTPoison.Response{body: body}} ->
-        reason = Poison.Parser.parse!(body)["message"]
+        reason = Poison.Parser.parse!(body, %{})["message"]
         {:error, reason}
 
       {:error, %HTTPoison.Error{reason: reason}} ->
@@ -368,10 +368,10 @@ defmodule AWS.Cognito.Sync do
         {:ok, nil, response}
 
       {:ok, response = %HTTPoison.Response{status_code: ^success_status_code, body: body}} ->
-        {:ok, Poison.Parser.parse!(body), response}
+        {:ok, Poison.Parser.parse!(body, %{}), response}
 
       {:ok, _response = %HTTPoison.Response{body: body}} ->
-        reason = Poison.Parser.parse!(body)["message"]
+        reason = Poison.Parser.parse!(body, %{})["message"]
         {:error, reason}
 
       {:error, %HTTPoison.Error{reason: reason}} ->

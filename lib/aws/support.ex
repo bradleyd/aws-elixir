@@ -353,10 +353,10 @@ defmodule AWS.Support do
         {:ok, nil, response}
 
       {:ok, response = %HTTPoison.Response{status_code: 200, body: body}} ->
-        {:ok, Poison.Parser.parse!(body), response}
+        {:ok, Poison.Parser.parse!(body, %{}), response}
 
       {:ok, _response = %HTTPoison.Response{body: body}} ->
-        error = Poison.Parser.parse!(body)
+        error = Poison.Parser.parse!(body, %{})
         exception = error["__type"]
         message = error["message"]
         {:error, {exception, message}}

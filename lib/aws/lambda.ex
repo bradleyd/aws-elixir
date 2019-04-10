@@ -281,31 +281,36 @@ defmodule AWS.Lambda do
   """
   def invoke(client, function_name, input, options \\ []) do
     url = "/2015-03-31/functions/#{URI.encode(function_name)}/invocations"
-    headers = []
+    {input, headers} = build_headers(input, [])
+    #if Map.has_key?(input, "ClientContext") do
+    #  headers = [{"X-Amz-Client-Context", input["ClientContext"]} | headers]
+    #  input = Map.delete(input, "ClientContext")
+    #end
 
-    if Map.has_key?(input, "ClientContext") do
-      headers = [{"X-Amz-Client-Context", input["ClientContext"]} | headers]
-      input = Map.delete(input, "ClientContext")
-    end
+    #if Map.has_key?(input, "InvocationType") do
+    #  headers = [{"X-Amz-Invocation-Type", input["InvocationType"]} | headers]
+    #  input = Map.delete(input, "InvocationType")
+    #end
 
-    if Map.has_key?(input, "InvocationType") do
-      headers = [{"X-Amz-Invocation-Type", input["InvocationType"]} | headers]
-      input = Map.delete(input, "InvocationType")
-    end
-
-    if Map.has_key?(input, "LogType") do
-      headers = [{"X-Amz-Log-Type", input["LogType"]} | headers]
-      input = Map.delete(input, "LogType")
-    end
+    #if Map.has_key?(input, "LogType") do
+    #  headers = [{"X-Amz-Log-Type", input["LogType"]} | headers]
+    #  input = Map.delete(input, "LogType")
+    #end
 
     case request(client, :post, url, headers, input, options, nil) do
       {:ok, body, response} ->
+        body =
         if !is_nil(response.headers["X-Amz-Function-Error"]) do
-          body = %{body | "FunctionError" => response.headers["X-Amz-Function-Error"]}
+          %{body | "FunctionError" => response.headers["X-Amz-Function-Error"]}
+        else
+          body
         end
 
+        body =
         if !is_nil(response.headers["X-Amz-Log-Result"]) do
-          body = %{body | "LogResult" => response.headers["X-Amz-Log-Result"]}
+          %{body | "LogResult" => response.headers["X-Amz-Log-Result"]}
+        else
+          body
         end
 
         {:ok, body, response}
@@ -514,6 +519,7 @@ defmodule AWS.Lambda do
   end
 
   defp request(client, method, url, headers, input, options, success_status_code) do
+    IO.inspect input
     client = %{client | service: "lambda"}
     host = get_host("lambda", client)
     url = get_url(host, url, client)
@@ -535,16 +541,16 @@ defmodule AWS.Lambda do
         {:ok, response}
 
       {:ok, response = %HTTPoison.Response{status_code: 200, body: body}} ->
-        {:ok, Poison.Parser.parse!(body), response}
+        {:ok, Poison.Parser.parse!(body, %{}), response}
 
       {:ok, response = %HTTPoison.Response{status_code: 202, body: body}} ->
-        {:ok, Poison.Parser.parse!(body), response}
+        {:ok, Poison.Parser.parse!(body, %{}), response}
 
       {:ok, response = %HTTPoison.Response{status_code: 204, body: body}} ->
-        {:ok, Poison.Parser.parse!(body), response}
+        {:ok, Poison.Parser.parse!(body, %{}), response}
 
       {:ok, _response = %HTTPoison.Response{body: body}} ->
-        reason = Poison.Parser.parse!(body)["message"]
+        reason = Poison.Parser.parse!(body, %{})["message"]
         {:error, reason}
 
       {:error, %HTTPoison.Error{reason: reason}} ->
@@ -558,10 +564,10 @@ defmodule AWS.Lambda do
         {:ok, nil, response}
 
       {:ok, response = %HTTPoison.Response{status_code: ^success_status_code, body: body}} ->
-        {:ok, Poison.Parser.parse!(body), response}
+        {:ok, Poison.Parser.parse!(body, %{}), response}
 
       {:ok, _response = %HTTPoison.Response{body: body}} ->
-        reason = Poison.Parser.parse!(body)["message"]
+        reason = Poison.Parser.parse!(body, %{})["message"]
         {:error, reason}
 
       {:error, %HTTPoison.Error{reason: reason}} ->
@@ -588,4 +594,24 @@ defmodule AWS.Lambda do
       ""
     end
   end
+
+  defp build_headers(%{"ClientContext" => _clientContext}=input, headers) do
+    headers = [{"X-Amz-Client-Context", input["ClientContext"]} | headers]
+    input = Map.delete(input, "ClientContext")
+    build_headers(input, headers)
+  end
+  defp build_headers(%{"InvocationType" => _invocationType}=input, headers) do
+    headers = [{"X-Amz-Invocation-Type", input["InvocationType"]} | headers]
+    input = Map.delete(input, "InvocationType")
+    build_headers(input, headers)
+  end
+  defp build_headers(%{"LogType" => _logType}=input, headers) do
+    headers = [{"X-Amz-Log-Type", input["LogType"]} | headers]
+    input = Map.delete(input, "LogType")
+    build_headers(input, headers)
+  end
+  defp build_headers(input, headers) do
+    {input, headers}
+  end
+
 end

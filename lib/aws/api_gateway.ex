@@ -558,19 +558,27 @@ defmodule AWS.APIGateway do
       }"
 
     headers = []
-
+    headers =
     if !is_nil(accepts) do
-      headers = [{"Accept", accepts} | headers]
+      [{"Accept", accepts} | headers]
+    else
+      headers 
     end
 
     case request(client, :get, url, headers, nil, options, 200) do
       {:ok, body, response} ->
+        body =
         if !is_nil(response.headers["Content-Disposition"]) do
-          body = %{body | "contentDisposition" => response.headers["Content-Disposition"]}
+          %{body | "contentDisposition" => response.headers["Content-Disposition"]}
+        else
+          body
         end
 
+        body =
         if !is_nil(response.headers["Content-Type"]) do
-          body = %{body | "contentType" => response.headers["Content-Type"]}
+          %{body | "contentType" => response.headers["Content-Type"]}
+        else
+          body
         end
 
         {:ok, body, response}
@@ -723,12 +731,18 @@ defmodule AWS.APIGateway do
 
     case request(client, :get, url, headers, nil, options, 200) do
       {:ok, body, response} ->
+        body =
         if !is_nil(response.headers["Content-Disposition"]) do
-          body = %{body | "contentDisposition" => response.headers["Content-Disposition"]}
+          %{body | "contentDisposition" => response.headers["Content-Disposition"]}
+        else
+          body
         end
 
+        body =
         if !is_nil(response.headers["Content-Type"]) do
-          body = %{body | "contentType" => response.headers["Content-Type"]}
+          %{body | "contentType" => response.headers["Content-Type"]}
+        else
+          body
         end
 
         {:ok, body, response}
@@ -1199,16 +1213,16 @@ defmodule AWS.APIGateway do
         {:ok, response}
 
       {:ok, response = %HTTPoison.Response{status_code: 200, body: body}} ->
-        {:ok, Poison.Parser.parse!(body), response}
+        {:ok, Poison.Parser.parse!(body, %{}), response}
 
       {:ok, response = %HTTPoison.Response{status_code: 202, body: body}} ->
-        {:ok, Poison.Parser.parse!(body), response}
+        {:ok, Poison.Parser.parse!(body, %{}), response}
 
       {:ok, response = %HTTPoison.Response{status_code: 204, body: body}} ->
-        {:ok, Poison.Parser.parse!(body), response}
+        {:ok, Poison.Parser.parse!(body, %{}), response}
 
       {:ok, _response = %HTTPoison.Response{body: body}} ->
-        reason = Poison.Parser.parse!(body)["message"]
+        reason = Poison.Parser.parse!(body, %{})["message"]
         {:error, reason}
 
       {:error, %HTTPoison.Error{reason: reason}} ->
@@ -1222,10 +1236,10 @@ defmodule AWS.APIGateway do
         {:ok, nil, response}
 
       {:ok, response = %HTTPoison.Response{status_code: ^success_status_code, body: body}} ->
-        {:ok, Poison.Parser.parse!(body), response}
+        {:ok, Poison.Parser.parse!(body, %{}), response}
 
       {:ok, _response = %HTTPoison.Response{body: body}} ->
-        reason = Poison.Parser.parse!(body)["message"]
+        reason = Poison.Parser.parse!(body, %{})["message"]
         {:error, reason}
 
       {:error, %HTTPoison.Error{reason: reason}} ->
