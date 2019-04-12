@@ -69,7 +69,7 @@ defmodule AWS.Request do
         "/"
       )
 
-    result = [
+    base = [
       {"X-Amz-Algorithm", "AWS4-HMAC-SHA256"},
       {"X-Amz-Credential", credential},
       {"X-Amz-Date", long_date},
@@ -77,11 +77,20 @@ defmodule AWS.Request do
       {"X-Amz-Signature", signature}
     ]
 
-    if expiry = :proplists.get_value("X-Amz-Expires", headers, nil) do
-      [{"X-Amz-Expires", expiry} | result]
-    else
-      result
-    end
+    base =
+      if expiry = :proplists.get_value("X-Amz-Expires", headers, nil) do
+        [{"X-Amz-Expires", expiry} | base]
+      else
+        base
+      end
+
+    base =
+      if Map.get(client, :security_token) do
+        [{"X-Amz-Security-Token", client.security_token} | base]
+      else
+        base
+      end
+    base
   end
 end
 
