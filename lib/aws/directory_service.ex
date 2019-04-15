@@ -430,7 +430,7 @@ defmodule AWS.DirectoryService do
       {"X-Amz-Target", "DirectoryService_20150416.#{action}"}
     ]
 
-    payload = Poison.Encoder.encode(input, [])
+    payload = Poison.Encoder.encode(input, %{})
     headers = AWS.Request.sign_v4(client, "POST", url, headers, payload)
 
     case HTTPoison.post(url, payload, headers, options) do

@@ -279,7 +279,7 @@ defmodule AWS.Cognito do
       {"X-Amz-Target", "AWSCognitoIdentityService.#{action}"}
     ]
 
-    payload = Poison.Encoder.encode(input, [])
+    payload = Poison.Encoder.encode(input, %{})
     headers = AWS.Request.sign_v4(client, "POST", url, headers, payload)
 
     case HTTPoison.post(url, payload, headers, options) do

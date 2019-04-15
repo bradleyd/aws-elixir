@@ -585,7 +585,7 @@ defmodule AWS.ECS do
       {"X-Amz-Target", "AmazonEC2ContainerServiceV20141113.#{action}"}
     ]
 
-    payload = Poison.Encoder.encode(input, [])
+    payload = Poison.Encoder.encode(input, %{})
     headers = AWS.Request.sign_v4(client, "POST", url, headers, payload)
 
     case HTTPoison.post(url, payload, headers, options) do

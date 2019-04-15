@@ -17,6 +17,8 @@ defmodule AWS.Request do
     {:ok, long_date} = Timex.format(now, "{YYYY}{0M}{0D}T{h24}{m}{s}Z")
     {:ok, short_date} = Timex.format(now, "{YYYY}{0M}{0D}")
     headers = Internal.add_date_header(headers, long_date)
+    headers = Internal.handle_temp_credentails(headers, client)
+
     canonical_request = Internal.canonical_request(method, url, headers, body)
     hashed_canonical_request = Util.sha256_hexdigest(canonical_request)
     credential_scope = Internal.credential_scope(short_date, client.region, client.service)
@@ -83,14 +85,6 @@ defmodule AWS.Request do
       else
         base
       end
-
-    base =
-      if Map.get(client, :security_token) do
-        [{"X-Amz-Security-Token", client.security_token} | base]
-      else
-        base
-      end
-    base
   end
 end
 
@@ -109,6 +103,11 @@ defmodule AWS.Request.Internal do
   """
   def add_date_header(headers, date) do
     [{"X-Amz-Date", date} | headers]
+  end
+
+  def handle_temp_credentails(headers, %AWS.Client{security_token: nil}), do: headers
+  def handle_temp_credentails(headers, %AWS.Client{security_token: security_token}) do
+    [{"X-Amz-Security-Token", security_token} | headers]
   end
 
   @doc """

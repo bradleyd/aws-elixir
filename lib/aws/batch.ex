@@ -293,7 +293,7 @@ defmodule AWS.Batch do
 
   defp encode_payload(input) do
     if input != nil do
-      Poison.Encoder.encode(input, [])
+      Poison.Encoder.encode(input, %{})
     else
       ""
     end

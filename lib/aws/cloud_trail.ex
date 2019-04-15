@@ -252,7 +252,7 @@ defmodule AWS.CloudTrail do
       {"X-Amz-Target", "com.amazonaws.cloudtrail.v20131101.CloudTrail_20131101.#{action}"}
     ]
 
-    payload = Poison.Encoder.encode(input, [])
+    payload = Poison.Encoder.encode(input, %{})
     headers = AWS.Request.sign_v4(client, "POST", url, headers, payload)
 
     case HTTPoison.post(url, payload, headers, options) do

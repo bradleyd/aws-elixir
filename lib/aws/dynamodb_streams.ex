@@ -93,7 +93,7 @@ defmodule AWS.DynamoDB.Streams do
       {"X-Amz-Target", "DynamoDBStreams_20120810.#{action}"}
     ]
 
-    payload = Poison.Encoder.encode(input, [])
+    payload = Poison.Encoder.encode(input, %{})
     headers = AWS.Request.sign_v4(client, "POST", url, headers, payload)
 
     case HTTPoison.post(url, payload, headers, options) do
